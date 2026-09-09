@@ -1,6 +1,6 @@
 {
   "name": "flymind",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "FlyMind for Obsidian: interactive Markdown mind maps with same-tab switching, dual layouts, collapsible content, free positioning and focus-centered zoom.",
   "main": "main.js",
   "scripts": {

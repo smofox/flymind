@@ -1,10 +1,48 @@
 # FlyMind
 
-[![版本 1.2.0](https://img.shields.io/badge/version-1.2.0-blue)](https://github.com/smofox/flymind) [![MIT License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Version 1.2.1](https://img.shields.io/badge/version-1.2.1-blue)](https://github.com/smofox/flymind/releases/tag/1.2.1) [![MIT License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
+## English
+
+**Turn your Markdown notes into interactive mind maps, right inside Obsidian.**
+
+FlyMind provides horizontal and vertical layouts, collapsible node content, freely movable nodes, and zoom controls. Switch between a note and its mind map in the same tab, or open a separate preview pane alongside the original Markdown.
+
+### Features
+
+- **Same-tab switching:** click the brain icon beside the tab title to switch between Markdown and a mind map. Returning to Markdown restores the editor or reading mode and scroll position within the current session.
+- **Two layout directions:** display branches from left to right or from top to bottom with consistent node and connector colors.
+- **Paragraphs inside nodes:** heading paragraphs and indented list paragraphs become node content instead of extra branches. Inline formatting and links are retained.
+- **Independent folding:** the circled plus/minus beside a node controls its body. Connection endpoints control child branches. Folding preserves the zoom level and the clicked control's screen position.
+- **Free positioning:** drag nodes to arrange them; connectors follow. The automatic-layout button restores the default arrangement without resetting zoom or fold states.
+- **Floating zoom controls:** zoom around the visible pane center, see the current percentage, or fit the entire map to the pane.
+- **Separate preview:** follow the active Markdown note or pin the preview to one note. Horizontal split means side by side; vertical split means stacked panes.
+
+### Installation
+
+1. Download `main.js` and `manifest.json` from the [latest GitHub release](https://github.com/smofox/flymind/releases/latest), or extract the `FlyMind-1.2.1.zip` archive.
+2. Place both files in `<vault>/.obsidian/plugins/flymind/`.
+3. Restart Obsidian and enable **FlyMind** under Community plugins. Keep your existing `data.json` when upgrading.
+
+The manifest declares Obsidian **1.0.0 or later**. Development and screenshot verification have primarily used desktop Obsidian; mobile interaction has not been tested on a physical device.
+
+### Usage and limitations
+
+Open a Markdown note and click the brain icon next to its tab title. Use the preview header to change layout direction or restore automatic positioning. To open a separate pane, run the FlyMind preview command from the command palette.
+
+Manual positions and body-fold states are kept only for the current preview session while the source remains unchanged. They are not written into Markdown and reset when the preview is reopened or its source changes. Indent paragraphs under list items to associate them with that list node.
+
+### Development and credits
+
+Run `npm install`, `npm test`, `npm run typecheck`, and `npm run build`. Installable files are generated in `dist/`. Bug reports are welcome in [Issues](https://github.com/smofox/flymind/issues); include the layout direction, reproduction steps, and a minimal Markdown example.
+
+Maintained by **fairyang**. Based on James Lynch's [Obsidian Mind Map](https://github.com/lynchjames/obsidian-mind-map) and Markmap. Distributed under the [MIT License](LICENSE), with the original copyright notice preserved.
+
+## 中文说明
 
 **让笔记变成可以展开、移动和探索的思维导图。**
 
-**版本：1.2.0** · Obsidian 交互式思维导图插件
+**版本：1.2.1** · Obsidian 交互式思维导图插件
 
 **作者：fairyang** · 原始项目作者：James Lynch
 
@@ -83,7 +121,7 @@
 
 ## 安装与升级
 
-项目地址：[smofox/flymind](https://github.com/smofox/flymind)。目前采用手动安装；源码 ZIP 需要先构建，不是可直接安装的插件包。
+项目地址：[smofox/flymind](https://github.com/smofox/flymind)。从 [最新 Release](https://github.com/smofox/flymind/releases/latest) 下载 `main.js`、`manifest.json` 或 FlyMind 安装包。GitHub 自动生成的 Source code ZIP 需要先构建，不是可直接安装的插件包。
 
 从源码构建：
 
@@ -122,6 +160,10 @@ npm run build
 **升级后仍显示旧名称或旧界面？** 重启 Obsidian；从旧插件迁移时确认启用的是 `flymind`，并保留原来的 `data.json`。
 
 问题反馈请提交到 [Issues](https://github.com/smofox/flymind/issues)，附上布局方向、复现步骤与最小 Markdown 示例。当前主要在桌面端使用，移动端交互尚未实机验证。
+
+## 1.2.1 更新
+
+根据社区检查补充英文功能、安装和使用说明；插件清单使用英文简介与标准句末标点，移除不受支持的 `js` 字段。保留中文说明及全部预览图。
 
 ## 1.2.0 更新
 
