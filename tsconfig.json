@@ -15,9 +15,11 @@
       "es5",
       "scripthost",
       "es2015"
-    ]
+    ],
+    "skipLibCheck": true
   },
   "include": [
-    "**/*.ts"
+    "src/**/*.ts",
+    "tests/**/*.ts"
   ]
 }

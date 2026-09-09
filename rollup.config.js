@@ -3,7 +3,7 @@ import {nodeResolve} from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import copy from 'rollup-plugin-copy';
 
-const TEST_VAULT = 'test-vault/.obsidian/plugins/obsidian-mindmap';
+const TEST_VAULT = 'test-vault/.obsidian/plugins/flymind';
 
 export default {
   input: 'src/main.ts',
@@ -21,7 +21,7 @@ export default {
     copy({
       targets: [
         { src: 'dist/main.js', dest: TEST_VAULT },
-        { src: ['manifest.json', 'styles.css'], dest: TEST_VAULT }
+        { src: 'manifest.json', dest: ['dist/', TEST_VAULT] }
       ], flatten: true
     })
   ]

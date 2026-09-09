@@ -13,3 +13,6 @@ coverage/
 test-vault/
 
 TODO.md
+
+# generated browser verification bundle
+tests/browser/bundle.js

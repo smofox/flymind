@@ -1,0 +1,36 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Mind Map layout verification</title><style>
+*{box-sizing:border-box}body{margin:0;font:14px system-ui;color:#253044;--text-normal:#253044;--font-text:system-ui;--background-primary:#fff}header{padding:14px 20px;background:#f4f6fa;border-bottom:1px solid #d5dce5}select,button{font:inherit;padding:6px 10px;margin-right:8px}main{display:grid;grid-template-columns:280px 1fr;height:calc(100vh - 65px)}textarea{resize:none;border:0;border-right:1px solid #d5dce5;padding:16px;font:12px monospace}#preview{display:flex;flex-direction:column;min-width:0}.view-header{min-height:46px;padding:6px;border-bottom:1px solid #eee;display:flex;gap:12px;align-items:center}.view-content{position:relative;flex:1;overflow:hidden}.pane-empty{padding:25px;color:#666}#status{margin-left:15px}
+</style></head><body><header>Mind map direction <select id="direction" aria-label="Mind map direction"><option value="horizontal">Horizontal (left to right)</option><option value="vertical">Vertical (top to bottom)</option></select><button id="zoom-in">Zoom in</button><button id="zoom-out">Zoom out</button><span id="status">opening…</span></header><main><textarea id="markdown" aria-label="Markdown source"># 段落支持验证
+
+标题下的说明显示在根节点内部。
+
+## 创建账户
+
+转入 **0.007295616 SOL**，用于创建配置账户。
+
+账户空间为 `1024 bytes`。这段正文与上一段同属于创建账户节点，不增加子分支。
+
+- 账户说明
+
+  这是列表项下的第一段正文。
+
+  这是第二段正文，包含 **粗体** 和 `代码`。
+
+  - 真正的子列表
+
+    子列表自己的段落也归入子列表节点。
+
+- 第二项
+
+  这个段落属于第二项。
+
+## 核验结果
+
+支持标题段落、列表段落、多段正文和自动换行。
+
+- 折叠测试 &lt;!-- fold --&gt;
+
+  这里的说明留在当前节点。
+
+  - 隐藏子项
+</textarea><section id="preview"><div class="view-header"><span class="view-header-title"></span><span class="view-actions"></span></div><div class="view-content"></div></section></main><script src="bundle.js"></script></body></html>

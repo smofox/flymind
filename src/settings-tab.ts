@@ -5,6 +5,7 @@ import {
     SplitDirection
 } from 'obsidian';
 import MindMap from './main';
+import { LayoutDirection } from './settings';
 
 export class MindMapSettingsTab extends PluginSettingTab {
     plugin: MindMap;
@@ -17,10 +18,22 @@ export class MindMapSettingsTab extends PluginSettingTab {
         const { containerEl } = this;
 
         containerEl.empty();
+        containerEl.createEl('h2', { text: `FlyMind ${this.plugin.manifest.version}` });
+        containerEl.createEl('p', { text: `作者：${this.plugin.manifest.author || ''}` });
+        containerEl.createEl('p', { text: '将 Markdown 笔记变为可交互的思维导图：同标签切换、水平／垂直布局、正文与分支独立折叠、自由拖动、自动排列和焦点缩放。' });
+
+        new Setting(containerEl)
+            .setName('Mind map direction')
+            .setDesc('Direction of the map itself; independent of the preview pane split.')
+            .addDropdown(dropDown => dropDown
+                .addOption('horizontal', 'Horizontal (left to right)')
+                .addOption('vertical', 'Vertical (top to bottom)')
+                .setValue(this.plugin.settings.layoutDirection)
+                .onChange((value: string) => this.plugin.setLayoutDirection(value as LayoutDirection)));
 
         new Setting(containerEl)
             .setName('Preview Split')
-            .setDesc('Split direction for the Mind Map Preview')
+            .setDesc('Where to place the preview pane. This does not change the map direction.')
             .addDropdown(dropDown =>
                 dropDown
                     .addOption('horizontal', 'Horizontal')

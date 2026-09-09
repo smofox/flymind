@@ -1,6 +1,9 @@
 import { SplitDirection } from 'obsidian';
 
+export type LayoutDirection = 'horizontal' | 'vertical';
+
 export class MindMapSettings {
+    layoutDirection: LayoutDirection = 'horizontal';
     splitDirection: SplitDirection = 'horizontal';
     nodeMinHeight: number = 16;
     lineHeight: string = '1em';

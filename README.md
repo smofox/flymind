@@ -1,63 +1,95 @@
-# Obsidian Mind Map
+# FlyMind
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/lynchjames/obsidian-mind-map/Release%20Build?logo=github&style=for-the-badge) ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/lynchjames/obsidian-mind-map?style=for-the-badge&sort=semver)
+[![版本 1.2.0](https://img.shields.io/badge/version-1.2.0-blue)](https://github.com/smofox/flymind) [![MIT License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
+**让笔记变成可以展开、移动和探索的思维导图。**
 
-This repository contains a plugin for [Obsidian](https://obsidian.md/) for viewing Markdown notes as Mind Maps using [Markmap](https://markmap.js.org/). 
+**版本：1.2.0** · Obsidian 交互式思维导图插件
 
-A similar plugin is available for [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=gera2ld.markmap-vscode).
-    
-## Features
+**作者：fairyang** · 原始项目作者：James Lynch
 
-- Preview your current note as a Mind Map
-- Mind Map preview updates as you select other panes, similar to the [Local Graph](https://forum.obsidian.md/t/how-to-open-a-local-graph-view-pane-on-the-right-sidebar/7190), [Outline](https://publish.obsidian.md/help/Plugins/Outline) and [Backlink](https://publish.obsidian.md/help/Plugins/Backlinks) panes
+将 Markdown 笔记转换为可浏览、可折叠、可自由排列的思维导图。基于 Markmap 和 James Lynch 的 Obsidian Mind Map 扩展开发。
 
-![Mind Map Demo Image](https://raw.githubusercontent.com/lynchjames/obsidian-mind-map/main/images/mind-map-demo.png)
+## 功能
 
-## Usage
+- **同标签切换**：点击标签右侧的大脑图标，在 Markdown 与思维导图间切换；切换前保存笔记，切回时恢复本次会话中的编辑／阅读模式和滚动位置。
+- **双向布局**：水平从左向右、垂直从上向下，统一节点配色与连线端点样式。
+- **节点正文**：标题下的段落、列表项内缩进段落作为对应节点内容，支持多段文字、强调、行内代码和链接。
+- **独立折叠**：左侧圆圈加减号控制正文，连线端点控制子分支；点击正文不会折叠分支。折叠时保留当前缩放和操作位置。
+- **自由排列**：拖动节点，连线同步移动；“自动”按钮恢复自动布局，保留缩放与折叠状态。
+- **焦点缩放**：右上角悬浮条提供减号、实时百分比、加号和适配画布；加减围绕当前可视区域中心缩放。
+- **独立预览**：通过命令打开预览窗格，支持跟随当前 Markdown 笔记或固定笔记。
+- **辅助操作**：支持笔记链接、Markdown 分支折叠提示和复制导图截图。
 
-You can open the Mind Map preview for the current note with a command.
+手动位置与正文折叠状态仅保留在当前未改变源内容的预览会话中，不写入 Markdown。关闭、重新打开预览或修改源笔记后会重新生成布局。
 
-![Mind Map Preview Command](https://raw.githubusercontent.com/lynchjames/obsidian-mind-map/main/images/mind-map-preview-command.png)
+## 使用
 
+1. 启用 FlyMind，打开 Markdown 笔记。
+2. 点击标签标题右侧的大脑图标切换为思维导图，再次点击返回笔记。
+3. 在导图顶部切换布局，拖动节点或使用悬浮缩放条浏览。
+4. 在设置 → FlyMind 调整布局方向、间距和文字行高。
 
-### Preview More Options Menu
+列表项正文需要缩进到列表内容列，例如：
 
-The Mind Map Preview view has 2 options from the "more options" menu:
+```markdown
+# 创建账户
 
-![Mind Map Preview More Options](https://raw.githubusercontent.com/lynchjames/obsidian-mind-map/main/images/mind-map-view-more-options.png)
+这段正文显示在标题节点内。
 
-#### Pin
+- 账户说明
 
-Allows you to pin the Mind Map preview pane to the current note so that you can select other notes with the current Mind Map remaining in place. A pin icon will appear in the header of the Mind Map preview pane. Click the pin icon to unpin.
+  这段正文显示在列表节点内。
 
-#### Copy screenshot
+  - 这是子分支
+```
 
-Places a copy of the Mind Map SVG on your clipboard allowing you to paste it into a note in Obsidian or into an image editor of your choice.
+## 安装与升级
 
-## Compatibility
+项目地址：[smofox/flymind](https://github.com/smofox/flymind)。目前采用手动安装；源码 ZIP 需要先构建，不是可直接安装的插件包。
 
-Custom plugins are only available for Obsidian v0.9.7+.
+从源码构建：
 
-The current API of this repo targets Obsidian **v0.9.20**. 
+```sh
+git clone https://github.com/smofox/flymind.git
+cd flymind
+npm install
+npm run build
+```
 
-## Installing
+将生成的 `dist/main.js` 与 `dist/manifest.json` 复制到下面的插件目录。
 
-As of version [0.9.7 of Obsidian](https://forum.obsidian.md/t/obsidian-release-v0-9-7-insider-build/7628), this plugin is available to be installed directly from within the app. The plugin can be found in the Community Plugins directory which can be accessed from the Settings pane under Third Party Plugins.
+将发布包内的 `main.js` 和 `manifest.json` 放入仓库的 `.obsidian/plugins/flymind/`，重新启用插件或重启 Obsidian。升级时保留 `data.json`。
 
-## Manual installation
+显示名称为 FlyMind，内部插件 ID 和安装目录名均为 `flymind`。从旧版迁移时，需将原目录中的 `data.json` 一并迁移，并将启用列表和自定义快捷键中的旧插件 ID 更新为 `flymind`。
 
-1. Download the [latest release](https://github.com/lynchjames/obsidian-mind-map/releases/latest)
-1. Extract the obsidian-day-planner folder from the zip to your vault's plugins folder: `<vault>/.obsidian/plugins/`  
-Note: On some machines the `.obsidian` folder may be hidden. On MacOS you should be able to press `Command+Shift+Dot` to show the folder in Finder.
-1. Reload Obsidian
-1. If prompted about Safe Mode, you can disable safe mode and enable the plugin.
+## 开发
 
-## For developers
-Pull requests are both welcome and appreciated. 😀
+```sh
+npm install
+npm test
+npm run typecheck
+npm run build
+```
 
-If you would like to contribute to the development of this plugin, please follow the guidelines provided in [CONTRIBUTING.md](CONTRIBUTING.md).
+构建输出位于 `dist/`。自动化检查涵盖正文解析、折叠、布局、拖动、同标签切换和缩放控件。
 
-## Donating
+## 常见问题
 
-This plugin is provided free of charge. If you would like to donate something to me, you can via [PayPal](https://paypal.me/lynchjames2020). Thank you!
+**打开笔记后仍显示 Markdown？** 点击标签标题旁的大脑图标。单纯打开 Markdown 文件不会自动进入导图模式。
+
+**如何分别折叠正文和子分支？** 节点左侧的圆圈加减号控制正文；连线端点及折叠提示加号控制子分支。
+
+**拖动位置会永久保存吗？** 当前版本只保留在预览会话中。点击“自动”恢复自动排列；修改源笔记会重新生成布局。
+
+**升级后仍显示旧名称或旧界面？** 重启 Obsidian；从旧插件迁移时确认启用的是 `flymind`，并保留原来的 `data.json`。
+
+问题反馈请提交到 [Issues](https://github.com/smofox/flymind/issues)，附上布局方向、复现步骤与最小 Markdown 示例。当前主要在桌面端使用，移动端交互尚未实机验证。
+
+## 1.2.0 更新
+
+正式采用 FlyMind 名称，更新插件信息和功能说明；整合同标签切换、双向布局、节点正文折叠、自由排列、自动布局恢复与悬浮缩放功能。
+
+## 致谢与许可证
+
+基于 [James Lynch / Obsidian Mind Map](https://github.com/lynchjames/obsidian-mind-map) 与 Markmap。遵循 MIT 许可证，保留原作者版权声明，详见 LICENSE。
