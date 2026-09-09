@@ -1,9 +1,10 @@
-import { INode } from 'markmap-common';
+import { MindNode as INode } from './node-types';
 import { layoutVertical, VerticalNode, VerticalLayout } from './vertical-layout';
 import { markmapColors, markmapLinkWidth } from './markmap-style';
 import { centerOf, keepScreenPoint } from './viewport-anchor';
 import { createExpandHint } from './fold-icons';
 import { Positions } from './manual-layout';
+import { setSafeHTML } from './safe-html';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 export interface VerticalOptions {
@@ -41,7 +42,7 @@ export class VerticalMarkmap {
     constructor(private svg: SVGElement, private root: INode, private options: VerticalOptions, private manual: Positions = new Map()) {
         this.colors = markmapColors(root);
         svg.classList.add('mindmap-vertical');
-        svg.style.touchAction = 'none';
+        svg.setCssStyles({ touchAction: 'none' });
         const style = svgElement('style');
         style.textContent = `.mindmap-vertical .mm-label { display: inline-block; max-width: 360px;
             white-space: normal; overflow-wrap: anywhere; text-align: center; font: ${options.font}; }
@@ -81,7 +82,7 @@ export class VerticalMarkmap {
         this.fit();
     }
 
-    private listen(type: string, handler: (event: any) => void, options?: AddEventListenerOptions) {
+    private listen<K extends keyof SVGElementEventMap>(type: K, handler: (event: SVGElementEventMap[K]) => void, options?: AddEventListenerOptions) {
         this.svg.addEventListener(type, handler, options);
         this.cleanup.push(() => this.svg.removeEventListener(type, handler, options));
     }
@@ -97,9 +98,9 @@ export class VerticalMarkmap {
             group.setAttribute('class', 'mm-node');
             group.setAttribute('data-node-id', id);
             const fo = svgElement('foreignObject');
-            const div = document.createElement('div');
+            const div = createDiv();
             div.className = 'mm-label';
-            div.innerHTML = data.v;
+            setSafeHTML(div, data.v);
             fo.appendChild(div);
             fo.setAttribute('width', '360');
             fo.setAttribute('height', '10000');
@@ -117,7 +118,7 @@ export class VerticalMarkmap {
             fo.setAttribute('y', String(labelInset));
             fo.setAttribute('width', String(width - padding * 2));
             fo.setAttribute('height', String(height - labelInset * 2));
-            const color = this.colors.get(data)!;
+            const color = this.colors.get(data);
             const borderInset = compact ? 0 : bodyToggle ? 8 : 0;
             borderInsets.set(id, borderInset);
             if (!bodyToggle && !compact) {
@@ -197,13 +198,13 @@ export class VerticalMarkmap {
         this.layout.nodes.forEach(node => groups.get(node.id).setAttribute('transform', `translate(${node.x},${node.y})`));
         this.layout.edges.forEach(edge => {
             const from = positions.get(edge.from), to = positions.get(edge.to);
-            const sx = from.x + from.width / 2, sy = from.y + from.height - borderInsets.get(edge.from)!;
-            const tx = to.x + to.width / 2, ty = to.y + borderInsets.get(edge.to)!, mid = (sy + ty) / 2;
+            const sx = from.x + from.width / 2, sy = from.y + from.height - borderInsets.get(edge.from);
+            const tx = to.x + to.width / 2, ty = to.y + borderInsets.get(edge.to), mid = (sy + ty) / 2;
             const path = svgElement('path');
             path.setAttribute('d', `M${sx},${sy} C${sx},${mid} ${tx},${mid} ${tx},${ty}`);
             path.setAttribute('fill', 'none');
-            path.setAttribute('stroke', this.colors.get(dataNodes.get(edge.to)!)!);
-            path.setAttribute('stroke-width', String(markmapLinkWidth(dataNodes.get(edge.to)!)));
+            path.setAttribute('stroke', this.colors.get(dataNodes.get(edge.to)));
+            path.setAttribute('stroke-width', String(markmapLinkWidth(dataNodes.get(edge.to))));
             paths.appendChild(path);
         });
         };

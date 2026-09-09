@@ -1,4 +1,5 @@
-import { INode } from 'markmap-common';
+import { MindNode as INode } from './node-types';
+import { safeHTML } from './safe-html';
 import { getLinkpath, Vault } from 'obsidian';
 import { INTERNAL_LINK_REGEX } from './constants';
 
@@ -11,6 +12,7 @@ export default class ObsidianMarkmap {
 
     updateInternalLinks(node: INode) {
         this.replaceInternalLinks(node);
+        node.v = safeHTML(node.v);
         if(node.c){
             node.c.forEach(n => this.updateInternalLinks(n));
         }
@@ -20,23 +22,29 @@ export default class ObsidianMarkmap {
         const matches = this.parseValue(node.v);
         for (let i = 0; i < matches.length; i++) {
             const match = matches[i];
-            const isWikiLink = match.groups['wikitext'];
-            const linkText = isWikiLink ? match.groups['wikitext'] : match.groups['mdtext'];
-            const linkPath = isWikiLink ? linkText : match.groups['mdpath'];
+            const groups = match.groups || {};
+            const isWikiLink = groups['wikitext'];
+            const linkText = isWikiLink ? groups['wikitext'] : groups['mdtext'];
+            const linkPath = isWikiLink ? linkText : groups['mdpath'];
+            if (!linkText || !linkPath) continue;
             if(linkPath.startsWith('http')){
                 continue;
             }
-            const url = `obsidian://open?vault=${this.vaultName}&file=${isWikiLink ? encodeURI(getLinkpath(linkPath)) : linkPath}`;
-            const link = `<a href=\"${url}\">${linkText}</a>`;
+            const url = `obsidian://open?vault=${encodeURIComponent(this.vaultName)}&file=${encodeURIComponent(isWikiLink ? getLinkpath(linkPath) : linkPath)}`;
+            const anchor = createEl('a');
+            anchor.setAttribute('href', url);
+            anchor.textContent = linkText;
+            const link = anchor.outerHTML;
             node.v = node.v.replace(match[0], link);
         }
     }
 
     private parseValue(v: string) {
-        const matches = [];
-        let match;
-        while(match = INTERNAL_LINK_REGEX.exec(v)){
+        const matches: RegExpExecArray[] = [];
+        let match = INTERNAL_LINK_REGEX.exec(v);
+        while (match !== null) {
             matches.push(match);
+            match = INTERNAL_LINK_REGEX.exec(v);
         }
         return matches;
     }

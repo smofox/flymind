@@ -1,13 +1,16 @@
 import { Markmap } from 'markmap-view';
 import { centerOf, keepScreenPoint } from './viewport-anchor';
 import { createExpandHint } from './fold-icons';
-import { IMarkmapFlexTreeItem } from 'markmap-view/types/types';
+import { IMarkmapFlexTreeItem as MarkmapTreeItem } from 'markmap-view/types/types';
+import { MindNode } from './node-types';
+interface IMarkmapFlexTreeItem extends Omit<MarkmapTreeItem, 'data' | 'parent'> { data: MindNode; parent: IMarkmapFlexTreeItem; }
 import { Positions } from './manual-layout';
+import { setSafeHTML } from './safe-html';
 const NS = 'http://www.w3.org/2000/svg';
 
 /** Preserve the stock layout/colors while limiting branch activation to endpoint circles. */
 export function useEndpointControls(map: Markmap, positions: Positions = new Map()) {
-    const render = map.renderData.bind(map);
+    const render: (origin?: MindNode) => void = map.renderData.bind(map) as (origin?: MindNode) => void;
     const position = (node: IMarkmapFlexTreeItem) => positions.get(node.data.p.layoutId)
         || { x: node.y, y: node.x - node.xSize / 2 };
     const redraw = () => {
@@ -34,13 +37,13 @@ export function useEndpointControls(map: Markmap, positions: Positions = new Map
         const groups = map.g.selectAll<SVGGElement, IMarkmapFlexTreeItem>('g')
             .filter(function () { return this.parentNode === map.g.node(); });
         groups.on('click', null).style('cursor', 'default');
-        groups.each(function (node) {
-            const group = this;
+        groups.each((node, index, elements) => {
+            const group = elements[index];
             group.setAttribute('data-node-id', node.data.p.layoutId || 'root');
             const fo = group.querySelector('foreignObject');
             if (fo) {
                 const div = fo.firstElementChild;
-                if (div && div.innerHTML !== node.data.v) div.innerHTML = node.data.v;
+                if (div && div.innerHTML !== node.data.v) setSafeHTML(div, node.data.v);
                 fo.setAttribute('height', String(node.xSize));
             }
             const outgoing = Array.from(group.children).find(el => el.tagName.toLowerCase() === 'circle') as SVGCircleElement;
@@ -69,7 +72,7 @@ export function useEndpointControls(map: Markmap, positions: Positions = new Map
                 circle.setAttribute('stroke', map.options.color(node.data));
                 circle.setAttribute('fill', expandable && node.data.p?.f ? map.options.color(node.data) : '#fff');
                 circle.setAttribute('class', expandable ? 'mm-branch-toggle' : 'mm-endpoint');
-                circle.style.cursor = expandable ? 'pointer' : 'default';
+                circle.setCssStyles({ cursor: expandable ? 'pointer' : 'default' });
                 if (expandable) {
                     circle.setAttribute('role', 'button');
                     circle.setAttribute('tabindex', '0');
@@ -113,8 +116,8 @@ export function useEndpointControls(map: Markmap, positions: Positions = new Map
     };
     map.renderData = origin => {
         // Apply layout attributes synchronously, then compensate the selected endpoint before paint.
-        const transition = map.transition;
-        map.transition = ((selection: any) => selection) as typeof map.transition;
+        const transition = map.transition.bind(map) as typeof map.transition;
+        map.transition = (<T>(selection: T) => selection) as typeof map.transition;
         try { render(origin); } finally { map.transition = transition; }
         bind();
     };
@@ -124,5 +127,5 @@ export function useEndpointControls(map: Markmap, positions: Positions = new Map
 
 export function translateHorizontal(map: Markmap, x: number, y: number) {
     const zoom = map.svg.property('__zoom') as { k: number };
-    map.svg.call(map.zoom.translateBy, x / zoom.k, y / zoom.k);
+    map.svg.call(selection => map.zoom.translateBy(selection, x / zoom.k, y / zoom.k));
 }

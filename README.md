@@ -1,6 +1,6 @@
 # FlyMind
 
-[![Version 1.2.1](https://img.shields.io/badge/version-1.2.1-blue)](https://github.com/smofox/flymind/releases/tag/1.2.1) [![MIT License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Version 1.2.2](https://img.shields.io/badge/version-1.2.2-blue)](https://github.com/smofox/flymind/releases/tag/1.2.2) [![MIT License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## English
 
@@ -20,11 +20,11 @@ FlyMind provides horizontal and vertical layouts, collapsible node content, free
 
 ### Installation
 
-1. Download `main.js` and `manifest.json` from the [latest GitHub release](https://github.com/smofox/flymind/releases/latest), or extract the `FlyMind-1.2.1.zip` archive.
+1. Download `main.js` and `manifest.json` from the [latest GitHub release](https://github.com/smofox/flymind/releases/latest).
 2. Place both files in `<vault>/.obsidian/plugins/flymind/`.
 3. Restart Obsidian and enable **FlyMind** under Community plugins. Keep your existing `data.json` when upgrading.
 
-The manifest declares Obsidian **1.0.0 or later**. Development and screenshot verification have primarily used desktop Obsidian; mobile interaction has not been tested on a physical device.
+The manifest declares Obsidian **1.1.0 or later**. Development and screenshot verification have primarily used desktop Obsidian; mobile interaction has not been tested on a physical device.
 
 ### Usage and limitations
 
@@ -34,7 +34,9 @@ Manual positions and body-fold states are kept only for the current preview sess
 
 ### Development and credits
 
-Run `npm install`, `npm test`, `npm run typecheck`, and `npm run build`. Installable files are generated in `dist/`. Bug reports are welcome in [Issues](https://github.com/smofox/flymind/issues); include the layout direction, reproduction steps, and a minimal Markdown example.
+Use Node.js 24 (minimum 22.12), then run `npm ci`, `npm run lint`, `npm test`, `npm run typecheck`, and `npm run build`. Installable files are generated in `dist/`. The committed lockfile fixes dependency resolution; release workflows build and attest the installable assets on GitHub. Bug reports are welcome in [Issues](https://github.com/smofox/flymind/issues); include the layout direction, reproduction steps, and a minimal Markdown example.
+
+Markdown-derived HTML is sanitized before rendering. Clipboard access is used only by the explicit **Copy screenshot** action; FlyMind does not read clipboard contents. Automated dependency audits distinguish runtime dependencies from development tools.
 
 Maintained by **fairyang**. Based on James Lynch's [Obsidian Mind Map](https://github.com/lynchjames/obsidian-mind-map) and Markmap. Distributed under the [MIT License](LICENSE), with the original copyright notice preserved.
 
@@ -42,7 +44,7 @@ Maintained by **fairyang**. Based on James Lynch's [Obsidian Mind Map](https://g
 
 **让笔记变成可以展开、移动和探索的思维导图。**
 
-**版本：1.2.1** · Obsidian 交互式思维导图插件
+**版本：1.2.2** · Obsidian 交互式思维导图插件
 
 **作者：fairyang** · 原始项目作者：James Lynch
 
@@ -121,14 +123,14 @@ Maintained by **fairyang**. Based on James Lynch's [Obsidian Mind Map](https://g
 
 ## 安装与升级
 
-项目地址：[smofox/flymind](https://github.com/smofox/flymind)。从 [最新 Release](https://github.com/smofox/flymind/releases/latest) 下载 `main.js`、`manifest.json` 或 FlyMind 安装包。GitHub 自动生成的 Source code ZIP 需要先构建，不是可直接安装的插件包。
+项目地址：[smofox/flymind](https://github.com/smofox/flymind)。从 [最新 Release](https://github.com/smofox/flymind/releases/latest) 下载 `main.js` 与 `manifest.json`。GitHub 自动生成的 Source code ZIP 需要先构建，不是可直接安装的插件包。
 
 从源码构建：
 
 ```sh
 git clone https://github.com/smofox/flymind.git
 cd flymind
-npm install
+npm ci
 npm run build
 ```
 
@@ -141,7 +143,8 @@ npm run build
 ## 开发
 
 ```sh
-npm install
+npm ci
+npm run lint
 npm test
 npm run typecheck
 npm run build
@@ -160,6 +163,10 @@ npm run build
 **升级后仍显示旧名称或旧界面？** 重启 Obsidian；从旧插件迁移时确认启用的是 `flymind`，并保留原来的 `data.json`。
 
 问题反馈请提交到 [Issues](https://github.com/smofox/flymind/issues)，附上布局方向、复现步骤与最小 Markdown 示例。当前主要在桌面端使用，移动端交互尚未实机验证。
+
+## 1.2.2 更新
+
+根据社区检查修复 HTML 注入、样式写法、最低 API 版本、设置标题和类型问题；支持新版本 Obsidian 的设置搜索，更新有已知漏洞的运行依赖并提交锁文件。新增严格 lint、HTML 安全回归检查及 GitHub 构建来源证明流程。最低 Obsidian 版本调整为 1.1.0；正文折叠、拖动、缩放和预览图保留。
 
 ## 1.2.1 更新
 

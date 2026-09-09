@@ -11,7 +11,7 @@ export function createExpandHint(color: string): SVGGElement {
     group.setAttribute('tabindex', '0');
     group.setAttribute('aria-label', 'Expand child branches');
     group.setAttribute('aria-expanded', 'false');
-    group.style.cursor = 'pointer';
+    group.setCssStyles({ cursor: 'pointer' });
     const circle = document.createElementNS(ns, 'circle');
     circle.setAttribute('r', '7');
     circle.setAttribute('fill', '#fff');

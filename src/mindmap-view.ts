@@ -1,7 +1,7 @@
-import { ItemView, Menu, Vault, Workspace, WorkspaceLeaf } from 'obsidian';
+import { ItemView, MarkdownView, Menu, Vault, ViewStateResult, Workspace, WorkspaceLeaf } from 'obsidian';
 import { transformWithParagraphs, toggleParagraphContent, applyParagraphAppearance } from './markdown-transform';
 import { Markmap } from 'markmap-view';
-import { INode } from 'markmap-common';
+import { MindNode as INode } from './node-types';
 import { FRONT_MATTER_REGEX, MD_VIEW_TYPE, MM_VIEW_TYPE } from './constants';
 import ObsidianMarkmap from './obsidian-markmap-plugin';
 import { createSVG, getComputedCss, removeExistingSVG } from './markmap-svg';
@@ -35,11 +35,11 @@ export default class MindmapView extends ItemView {
     private needsRender = true;
     inline = false;
     getState() { return { file: this.filePath, inline: this.inline }; }
-    async setState(state: { file?: string; inline?: boolean }, result: any) {
+    async setState(state: { file?: string; inline?: boolean }, result: ViewStateResult) {
         this.inline = !!state.inline;
         if (state.file) {
             this.filePath = state.file;
-            this.fileName = state.file.split('/').pop()!.replace(/\.md$/, '');
+            this.fileName = state.file.split('/').pop().replace(/\.md$/, '');
         }
         if (this.inline) { this.isLeafPinned = true; this.linkedLeaf = undefined; }
         await super.setState(state, result);
@@ -105,7 +105,7 @@ export default class MindmapView extends ItemView {
             .addItem(item => item.setIcon('pin').setTitle(this.isLeafPinned ? 'Unpin' : 'Pin')
                 .onClick(() => this.isLeafPinned ? this.unPin() : this.pinCurrentLeaf()))
             .addItem(item => item.setIcon('image-file').setTitle('Copy screenshot')
-                .onClick(() => { if (this.svg) copyImageToClipboard(this.svg); }));
+                .onClick(() => { if (this.svg) void copyImageToClipboard(this.svg); }));
     }
 
     updateLinkedLeaf(group: string) {
@@ -132,15 +132,15 @@ export default class MindmapView extends ItemView {
 
     getLeafTarget() {
         if (this.inline) return undefined;
-        const active = this.workspace.activeLeaf;
-        if (!this.isLeafPinned && active?.view.getViewType() === MD_VIEW_TYPE) this.linkedLeaf = active;
+        const active = this.workspace.getActiveViewOfType(MarkdownView)?.leaf;
+        if (!this.isLeafPinned && active) this.linkedLeaf = active;
         return this.linkedLeaf;
     }
 
     async checkAndUpdate() {
         if (this.closed) return;
         const target = this.getLeafTarget();
-        const file = (target?.view as any)?.file;
+        const file = (target?.view as MarkdownView | undefined)?.file;
         if (file) { this.filePath = file.path; this.fileName = file.basename; }
         try { await this.update(false); } catch (error) { console.error(error); }
     }
@@ -201,12 +201,12 @@ export default class MindmapView extends ItemView {
             void this.renderer.fit();
         }
         const renderer = this.renderer;
-        const scale = () => renderer instanceof VerticalMarkmap ? renderer.getScale() : renderer.svg.property('__zoom').k;
+        const scale = () => renderer instanceof VerticalMarkmap ? renderer.getScale() : (renderer.svg.property('__zoom') as { k: number }).k;
         this.removeZoomControls = createZoomControls(this.svg, scale,
             factor => { void renderer.rescale(Math.max(.02, Math.min(8, scale() * factor)) / scale()); },
             () => { void renderer.fit(); });
         this.removeDragging = bindNodeDragging(this.svg, this.manual,
-            () => renderer instanceof VerticalMarkmap ? renderer.getScale() : renderer.svg.property('__zoom').k,
+            scale,
             () => this.redrawManual());
         this.needsRender = false;
         const vertical = this.settings.layoutDirection === 'vertical';
@@ -265,11 +265,11 @@ export default class MindmapView extends ItemView {
 
     private displayEmpty(display: boolean) {
         if (!this.emptyDiv) {
-            this.emptyDiv = document.createElement('div');
+            this.emptyDiv = createDiv();
             this.emptyDiv.className = 'pane-empty';
             this.emptyDiv.textContent = 'No content found';
             this.containerEl.children[1].appendChild(this.emptyDiv);
         }
-        this.emptyDiv.style.display = display ? '' : 'none';
+        this.emptyDiv.setCssStyles({ display: display ? '' : 'none' });
     }
 }

@@ -31,16 +31,16 @@ export function layoutVertical(root: VerticalNode, gapX: number, gapY: number): 
     const nodes: PositionedNode[] = [];
     const edges: VerticalLayout['edges'] = [];
     function place(node: VerticalNode, left: number, depth: number) {
-        const span = spans.get(node.id)!;
+        const span = spans.get(node.id);
         nodes.push({ ...node, x: left + (span - node.width) / 2, y: levelY[depth] });
         const children = visibleChildren(node);
-        const childWidth = children.reduce((sum, child) => sum + spans.get(child.id)!, 0)
+        const childWidth = children.reduce((sum, child) => sum + spans.get(child.id), 0)
             + Math.max(0, children.length - 1) * gapX;
         let childLeft = left + (span - childWidth) / 2;
         children.forEach(child => {
             edges.push({ from: node.id, to: child.id });
             place(child, childLeft, depth + 1);
-            childLeft += spans.get(child.id)! + gapX;
+            childLeft += spans.get(child.id) + gapX;
         });
     }
     place(root, 0, 0);

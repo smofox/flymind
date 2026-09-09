@@ -1,4 +1,4 @@
-import { INode } from 'markmap-common';
+import { MindNode as INode } from './node-types';
 export type Positions = Map<string, { x: number; y: number }>;
 export function identifyNodes(node: INode, id = 'root') {
     node.p = { ...node.p, layoutId: id };
@@ -20,7 +20,7 @@ export function bindNodeDragging(svg: SVGElement, positions: Positions, scale: (
         if (!match) return;
         event.stopImmediatePropagation();
         event.preventDefault();
-        drag = { id: node.dataset.nodeId!, pointer: event.pointerId, x: event.clientX, y: event.clientY,
+        drag = { id: node.dataset.nodeId, pointer: event.pointerId, x: event.clientX, y: event.clientY,
             origin: { x: Number(match[1]), y: Number(match[2]) } };
         svg.setPointerCapture?.(event.pointerId);
     };

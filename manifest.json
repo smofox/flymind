@@ -2,8 +2,8 @@
   "id": "flymind",
   "name": "FlyMind",
   "author": "fairyang",
-  "version": "1.2.1",
-  "minAppVersion": "1.0.0",
+  "version": "1.2.2",
+  "minAppVersion": "1.1.0",
   "description": "Turn Markdown notes into interactive mind maps with same-tab switching, horizontal and vertical layouts, collapsible content, free node positioning, and focus-centered zoom.",
   "isDesktopOnly": false
 }

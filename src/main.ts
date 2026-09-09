@@ -14,7 +14,8 @@ export default class MindMap extends Plugin {
     async onload() {
         this.vault = this.app.vault;
         this.workspace = this.app.workspace;
-        this.settings = Object.assign(new MindMapSettings(), await this.loadData());
+        const stored = await this.loadData() as Partial<MindMapSettings> | null;
+        this.settings = Object.assign(new MindMapSettings(), stored);
         this.settings.layoutDirection = this.settings.layoutDirection === 'vertical' ? 'vertical' : 'horizontal';
         this.settings.splitDirection = String(this.settings.splitDirection).toLowerCase() === 'vertical' ? 'vertical' : 'horizontal';
         this.registerView(MM_VIEW_TYPE, (leaf: WorkspaceLeaf) => this.createPreview(leaf));
@@ -23,7 +24,7 @@ export default class MindMap extends Plugin {
         this.registerEvent(this.workspace.on('layout-change', () => this.tabToggle.sync()));
         this.registerEvent(this.workspace.on('active-leaf-change', () => this.tabToggle.sync()));
         this.addCommand({ id: 'app:markmap-preview', name: '在独立窗格预览当前笔记',
-            callback: () => this.markMapPreview(), hotkeys: [] });
+            callback: () => this.markMapPreview() });
         this.addCommand({ id: 'toggle-layout-direction', name: '切换水平／垂直布局',
             callback: () => this.setLayoutDirection(this.settings.layoutDirection === 'horizontal' ? 'vertical' : 'horizontal') });
         this.addSettingTab(new MindMapSettingsTab(this.app, this));
@@ -50,7 +51,7 @@ export default class MindMap extends Plugin {
             return;
         }
         // The preference describes pane placement; Obsidian names the divider direction.
-        const leaf = this.workspace.splitActiveLeaf(this.settings.splitDirection === 'horizontal' ? 'vertical' : 'horizontal');
+        const leaf = this.workspace.getLeaf('split', this.settings.splitDirection === 'horizontal' ? 'vertical' : 'horizontal');
         const preview = this.createPreview(leaf, source);
         await leaf.open(preview);
     }

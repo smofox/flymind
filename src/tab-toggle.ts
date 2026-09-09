@@ -1,10 +1,10 @@
-import { Workspace, WorkspaceLeaf, setIcon } from 'obsidian';
+import { ViewState, Workspace, WorkspaceLeaf, setIcon } from 'obsidian';
 import { MM_VIEW_TYPE } from './constants';
 
 /** Owns tab-header controls; switching always reuses the clicked leaf. */
 export class TabToggle {
     private buttons = new Map<WorkspaceLeaf, HTMLButtonElement>();
-    private saved = new WeakMap<WorkspaceLeaf, { state: any; ephemeral: any }>();
+    private saved = new WeakMap<WorkspaceLeaf, { state: ViewState; ephemeral: Record<string, unknown> }>();
     private busy = new Set<WorkspaceLeaf>();
     constructor(private workspace: Workspace) {}
 
@@ -21,9 +21,9 @@ export class TabToggle {
             let button = this.buttons.get(leaf);
             if (!button || !inner.contains(button)) {
                 button?.remove();
-                button = document.createElement('button');
+                button = createEl('button');
                 button.className = 'clickable-icon mm-tab-toggle';
-                button.style.cssText = 'padding:2px;margin-left:6px;background:transparent;border:0;box-shadow:none;flex-shrink:0;';
+                button.setCssStyles({ padding: '2px', marginLeft: '6px', background: 'transparent', border: '0', boxShadow: 'none', flexShrink: '0' });
                 setIcon(button, 'brain');
                 button.addEventListener('pointerdown', event => event.stopPropagation());
                 button.addEventListener('mousedown', event => event.stopPropagation());
@@ -38,7 +38,7 @@ export class TabToggle {
             button.title = mapped ? '切换回 Markdown' : '切换为思维导图';
             button.setAttribute('aria-label', button.title);
             button.setAttribute('aria-pressed', String(mapped));
-            button.style.color = mapped ? 'var(--interactive-accent)' : '';
+            button.setCssStyles({ color: mapped ? 'var(--interactive-accent)' : '' });
         });
         this.buttons.forEach((button, leaf) => {
             if (!live.has(leaf)) { button.remove(); this.buttons.delete(leaf); }
@@ -53,8 +53,8 @@ export class TabToggle {
                 const view = leaf.view as typeof leaf.view & { save?: () => Promise<void> };
                 await view.save?.();
                 const state = leaf.getViewState();
-                if (!state.state?.file) return;
-                this.saved.set(leaf, { state, ephemeral: leaf.getEphemeralState() });
+                if (typeof state.state?.file !== 'string') return;
+                this.saved.set(leaf, { state, ephemeral: leaf.getEphemeralState() as Record<string, unknown> });
                 await leaf.setViewState({ type: MM_VIEW_TYPE, state: { file: state.state.file, inline: true }, active: true });
             } else if (leaf.view.getViewType() === MM_VIEW_TYPE) {
                 const saved = this.saved.get(leaf);

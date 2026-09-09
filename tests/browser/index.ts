@@ -6,7 +6,7 @@ const output = document.querySelector<HTMLElement>('#preview')!;
 const select = document.querySelector<HTMLSelectElement>('#direction')!;
 const status = document.querySelector<HTMLElement>('#status')!;
 const source: any = { view: { getViewType: () => 'markdown', file: { path: 'fixture.md', basename: 'Fixture' } } };
-const workspace: any = { activeLeaf: source, on: () => ({}), getGroupLeaves: () => [source] };
+const workspace: any = { activeLeaf: source, getActiveViewOfType: () => workspace.activeLeaf === source ? { ...source.view, leaf: source } : null, on: () => ({}), getGroupLeaves: () => [source] };
 const app = { workspace, vault: { getName: () => 'Fixture', adapter: { read: async () => md.value } } };
 const preview: any = { app, containerEl: output, view: { getViewType: () => 'mindmap' }, on: () => ({}) };
 const settings = new MindMapSettings();

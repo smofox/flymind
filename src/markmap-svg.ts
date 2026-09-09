@@ -1,9 +1,9 @@
 export function createSVG(containerEl: HTMLElement, lineHeight: string): SVGElement {
     removeExistingSVG(containerEl);
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const svg = createSvg('svg');
     svg.classList.add('mindmap-svg');
-    svg.setAttribute('style', 'height: 100%; width: 100%;');
-    const style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+    svg.setCssStyles({ height: '100%', width: '100%' });
+    const style = createSvg('style');
     const { color } = getComputedCss(containerEl);
     style.textContent = `.mindmap-svg div { color: ${color}; line-height: ${lineHeight || '1em'}; }`;
     svg.appendChild(style);

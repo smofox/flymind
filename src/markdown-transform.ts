@@ -1,7 +1,9 @@
 import { builtInPlugins, ITransformPlugin, setPlugins, transform } from 'markmap-lib';
-import { INode } from 'markmap-common';
+import { MindNode as INode } from './node-types';
+import MarkdownIt from 'markdown-it';
 import { markmapColors } from './markmap-style';
 import { bodyFoldIcon } from './fold-icons';
+import { safeHTML, setSafeHTML } from './safe-html';
 
 const CONTENT = 'mindmap_content';
 interface Token { type: string; }
@@ -33,7 +35,7 @@ const paragraphs: ITransformPlugin = {
     name: 'node-paragraphs',
     transform(hooks) {
         // markmap-lib 0.10 uses the old Hook type declaration; its runtime tap API is unchanged.
-        const parser = hooks.parser as unknown as { tap(fn: (md: any) => void): void };
+        const parser = hooks.parser as unknown as { tap(fn: (md: MarkdownIt) => void): void };
         parser.tap(md => {
             if (!configuredParsers.has(md)) {
                 md.core.ruler.after('inline', 'mindmap_node_paragraphs', retainParagraphs);
@@ -41,7 +43,7 @@ const paragraphs: ITransformPlugin = {
             }
             // An unlabelled fence needs no language loading or syntax-highlighter warning.
             const highlight = md.options.highlight;
-            md.set({ highlight: (code: string, lang: string) => lang && highlight ? highlight(code, lang) : '' });
+            md.set({ highlight: (code: string, lang: string, attrs: string) => lang && highlight ? highlight(code, lang, attrs) : '' });
         });
         return {};
     }
@@ -59,16 +61,18 @@ function contentHTML(title: string, bodies: string[], id: number): string {
 function mergeParagraphs(node: INode, nextId: () => number) {
     if (node.t === CONTENT) {
         node.t = 'paragraph';
-        node.p = { ...node.p, paragraphId: nextId() };
-        node.v = contentHTML('', [node.v], node.p.paragraphId);
+        const id = nextId();
+        node.p = { ...node.p, paragraphId: id };
+        node.v = contentHTML('', [node.v], id);
     }
     const body = (node.c || []).filter(child => child.t === CONTENT);
     const remaining = (node.c || []).filter(child => child.t !== CONTENT);
     if (body.length) {
         const values = body.map(child => child.v).filter(value => value.trim());
         if (values.length) {
-            node.p = { ...node.p, paragraphId: nextId() };
-            node.v = contentHTML(node.v || '', values, node.p.paragraphId);
+            const id = nextId();
+            node.p = { ...node.p, paragraphId: id };
+            node.v = contentHTML(node.v || '', values, id);
         }
         if (body.some(child => child.p?.f)) node.p = { ...node.p, f: true };
     }
@@ -84,36 +88,36 @@ function mergeParagraphs(node: INode, nextId: () => number) {
 }
 
 export function transformWithParagraphs(markdown: string) {
-    const result = transform(markdown);
+    const result = transform(markdown) as ReturnType<typeof transform> & { root: INode };
     let paragraphId = 0;
     mergeParagraphs(result.root, () => paragraphId++);
+    const sanitize = (node: INode) => { node.v = safeHTML(node.v); (node.c || []).forEach(sanitize); };
+    sanitize(result.root);
     return result;
 }
 
 /** Update the current rendered HTML so resolved note links and both renderers share the same state. */
 export function toggleParagraphContent(root: INode, id: number, bordered = true): boolean {
     if (root.p?.paragraphId === id) {
-        const container = document.createElement('div');
-        container.innerHTML = root.v;
+        const container = createDiv();
+        setSafeHTML(container, root.v);
         const body = container.querySelector<HTMLElement>('.mm-node-body');
         const button = container.querySelector<HTMLButtonElement>('.mm-node-body-toggle');
         if (!body || !button) return false;
         const collapsed = button.getAttribute('aria-expanded') === 'true';
-        body.style.display = collapsed ? 'none' : '';
+        body.setCssStyles({ display: collapsed ? 'none' : '' });
         const card = container.querySelector<HTMLElement>('.mm-node-card');
         const heading = container.querySelector<HTMLElement>('.mm-node-heading');
         if (card) {
-            card.style.width = collapsed ? 'max-content' : '320px';
-            card.style.maxWidth = '320px';
-            card.style.padding = collapsed ? '0' : '8px 12px';
+            card.setCssStyles({ width: collapsed ? 'max-content' : '320px', maxWidth: '320px', padding: collapsed ? '0' : '8px 12px' });
             setCardBorder(card, bordered && !collapsed);
         }
-        if (heading) heading.style.marginBottom = collapsed ? '0' : '6px';
+        if (heading) heading.setCssStyles({ marginBottom: collapsed ? '0' : '6px' });
         const shell = container.querySelector<HTMLElement>('.mm-node-shell');
-        if (shell) { shell.style.paddingTop = !bordered && collapsed ? '14px' : '0'; shell.style.paddingBottom = shell.style.paddingTop; }
-        button.style.color = collapsed ? '#c14444' : '#267e4d';
+        if (shell) shell.setCssStyles({ paddingTop: !bordered && collapsed ? '14px' : '0', paddingBottom: !bordered && collapsed ? '14px' : '0' });
+        button.setCssStyles({ color: collapsed ? '#c14444' : '#267e4d' });
         button.setAttribute('aria-expanded', String(!collapsed));
-        button.innerHTML = bodyFoldIcon(collapsed);
+        setSafeHTML(button, bodyFoldIcon(collapsed));
         button.setAttribute('aria-label', collapsed ? '展开正文' : '收起正文');
         button.title = collapsed ? '展开正文' : '收起正文';
         root.v = container.innerHTML;
@@ -124,27 +128,24 @@ export function toggleParagraphContent(root: INode, id: number, bordered = true)
 
 function setCardBorder(card: HTMLElement, visible: boolean, color = card.dataset.borderColor || '#1f77b4') {
     // Reset all border longhands together: changing only width can lose the variable-color shorthand.
-    card.style.border = '';
-    card.style.borderWidth = visible ? '1px' : '0';
-    card.style.borderStyle = visible ? 'dashed' : 'none';
+    card.setCssStyles({ border: '', borderWidth: visible ? '1px' : '0', borderStyle: visible ? 'dashed' : 'none' });
     card.dataset.borderColor = color;
-    card.style.borderColor = color;
-    card.style.setProperty('background', visible ? 'var(--background-primary, #fff)' : 'transparent');
+    card.setCssStyles({ borderColor: color, background: visible ? 'var(--background-primary, #fff)' : 'transparent' });
 }
 
 export function applyParagraphAppearance(root: INode, bordered: boolean) {
     const colors = markmapColors(root);
     const visit = (node: INode) => {
         if (node.p?.paragraphId !== undefined) {
-            const container = document.createElement('div');
-            container.innerHTML = node.v;
+            const container = createDiv();
+            setSafeHTML(container, node.v);
             const card = container.querySelector<HTMLElement>('.mm-node-card');
             const button = container.querySelector('.mm-node-body-toggle');
             const shell = container.querySelector<HTMLElement>('.mm-node-shell');
             if (card && button) {
                 const collapsed = button.getAttribute('aria-expanded') !== 'true';
-                setCardBorder(card, bordered && !collapsed, colors.get(node)!);
-                if (shell) { shell.style.paddingTop = !bordered && collapsed ? '14px' : '0'; shell.style.paddingBottom = shell.style.paddingTop; }
+                setCardBorder(card, bordered && !collapsed, colors.get(node));
+                if (shell) shell.setCssStyles({ paddingTop: !bordered && collapsed ? '14px' : '0', paddingBottom: !bordered && collapsed ? '14px' : '0' });
                 node.v = container.innerHTML;
             }
         }
