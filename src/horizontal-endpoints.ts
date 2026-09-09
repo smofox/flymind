@@ -10,7 +10,7 @@ const NS = 'http://www.w3.org/2000/svg';
 
 /** Preserve the stock layout/colors while limiting branch activation to endpoint circles. */
 export function useEndpointControls(map: Markmap, positions: Positions = new Map()) {
-    const render: (origin?: MindNode) => void = map.renderData.bind(map) as (origin?: MindNode) => void;
+    const render = map.renderData.bind(map);
     const position = (node: IMarkmapFlexTreeItem) => positions.get(node.data.p.layoutId)
         || { x: node.y, y: node.x - node.xSize / 2 };
     const redraw = () => {
@@ -116,7 +116,7 @@ export function useEndpointControls(map: Markmap, positions: Positions = new Map
     };
     map.renderData = origin => {
         // Apply layout attributes synchronously, then compensate the selected endpoint before paint.
-        const transition = map.transition.bind(map) as typeof map.transition;
+        const transition = map.transition.bind(map);
         map.transition = (<T>(selection: T) => selection) as typeof map.transition;
         try { render(origin); } finally { map.transition = transition; }
         bind();

@@ -1,6 +1,6 @@
 # FlyMind
 
-[![Version 1.2.2](https://img.shields.io/badge/version-1.2.2-blue)](https://github.com/smofox/flymind/releases/tag/1.2.2) [![MIT License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Version 1.2.3](https://img.shields.io/badge/version-1.2.3-blue)](https://github.com/smofox/flymind/releases/tag/1.2.3) [![MIT License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## English
 
@@ -44,7 +44,7 @@ Maintained by **fairyang**. Based on James Lynch's [Obsidian Mind Map](https://g
 
 **让笔记变成可以展开、移动和探索的思维导图。**
 
-**版本：1.2.2** · Obsidian 交互式思维导图插件
+**版本：1.2.3** · Obsidian 交互式思维导图插件
 
 **作者：fairyang** · 原始项目作者：James Lynch
 
@@ -163,6 +163,10 @@ npm run build
 **升级后仍显示旧名称或旧界面？** 重启 Obsidian；从旧插件迁移时确认启用的是 `flymind`，并保留原来的 `data.json`。
 
 问题反馈请提交到 [Issues](https://github.com/smofox/flymind/issues)，附上布局方向、复现步骤与最小 Markdown 示例。当前主要在桌面端使用，移动端交互尚未实机验证。
+
+## 1.2.3 更新
+
+补齐 ES2018 标准库类型，启用严格 bind/call/apply 类型检查并移除多余断言，解决社区检查中的剩余类型警告；运行功能不变。
 
 ## 1.2.2 更新
 

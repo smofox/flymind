@@ -1,4 +1,10 @@
-## FlyMind 1.2.2 — community review fixes
+## FlyMind 1.2.3 — type-checking compatibility
+
+- Declare ES2018 library types for named regular-expression groups and Object.entries.
+- Enable strict bind/call/apply typing and remove redundant bound-method assertions.
+- Preserve the existing runtime behavior and all 1.2.2 review fixes below.
+
+### Included 1.2.2 fixes
 
 - Sanitize Markdown-derived HTML before rendering and off-screen measurement.
 - Preserve node content, safe note links, body folding, branch controls, dragging and zoom.
