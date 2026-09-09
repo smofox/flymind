@@ -33,11 +33,11 @@ export class MindMapSettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Preview Split')
-            .setDesc('Where to place the preview pane. This does not change the map direction.')
+            .setDesc('Horizontal：左右并排；Vertical：上下排列。仅影响新建预览窗格，不改变导图方向。')
             .addDropdown(dropDown =>
                 dropDown
-                    .addOption('horizontal', 'Horizontal')
-                    .addOption('vertical', 'Vertical')
+                    .addOption('horizontal', 'Horizontal（左右并排）')
+                    .addOption('vertical', 'Vertical（上下排列）')
                     .setValue(this.plugin.settings.splitDirection || 'horizontal')
                     .onChange((value: string) => {
                         this.plugin.settings.splitDirection = value as SplitDirection;

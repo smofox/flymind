@@ -49,7 +49,8 @@ export default class MindMap extends Plugin {
             await view.update();
             return;
         }
-        const leaf = this.workspace.splitActiveLeaf(this.settings.splitDirection);
+        // The preference describes pane placement; Obsidian names the divider direction.
+        const leaf = this.workspace.splitActiveLeaf(this.settings.splitDirection === 'horizontal' ? 'vertical' : 'horizontal');
         const preview = this.createPreview(leaf, source);
         await leaf.open(preview);
     }
