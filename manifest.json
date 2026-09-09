@@ -3,6 +3,7 @@
   "name": "FlyMind",
   "author": "fairyang",
   "version": "1.2.0",
+  "minAppVersion": "1.0.0",
   "description": "将 Markdown 笔记转换为交互式思维导图，支持同标签切换、水平与垂直布局、段落折叠、自由拖动和焦点缩放。",
   "isDesktopOnly": false,
   "js": "main.js"
