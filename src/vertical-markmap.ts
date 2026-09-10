@@ -32,6 +32,10 @@ export class VerticalMarkmap {
     rescale(factor: number) {
         const rect = this.svg.getBoundingClientRect();
         const x = (rect.width || 800) / 2, y = (rect.height || 600) / 2;
+        this.zoomAt(x, y, factor);
+    }
+
+    private zoomAt(x: number, y: number, factor: number) {
         const next = Math.max(.02, Math.min(8, this.scale * factor));
         this.offset = { x: x - (x - this.offset.x) * next / this.scale,
             y: y - (y - this.offset.y) * next / this.scale };
@@ -59,12 +63,14 @@ export class VerticalMarkmap {
             event.preventDefault();
             const rect = svg.getBoundingClientRect();
             const x = event.clientX - rect.left, y = event.clientY - rect.top;
-            const next = Math.max(.02, Math.min(8, this.scale * Math.exp(-event.deltaY * .002)));
-            this.offset = { x: x - (x - this.offset.x) * next / this.scale,
-                y: y - (y - this.offset.y) * next / this.scale };
-            this.scale = next;
-            this.applyTransform();
+            this.zoomAt(x, y, Math.exp(-event.deltaY * .002));
         }, { passive: false });
+        this.listen('dblclick', (event: MouseEvent) => {
+            if (event.button !== 0 || event.defaultPrevented || (event.target as Element).closest('.mm-node, a, button')) return;
+            event.preventDefault();
+            const rect = svg.getBoundingClientRect();
+            this.zoomAt(event.clientX - rect.left, event.clientY - rect.top, event.shiftKey ? .5 : 2);
+        });
         this.listen('pointerdown', (event: PointerEvent) => {
             if (event.button !== 0 || (event.target as Element).closest('.mm-node, a')) return;
             this.drag = { x: event.clientX, y: event.clientY, ox: this.offset.x, oy: this.offset.y };

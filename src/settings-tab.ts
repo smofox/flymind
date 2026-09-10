@@ -20,6 +20,7 @@ export class MindMapSettingsTab extends PluginSettingTab {
         return [
             { name: 'Mind map direction', control: { type: 'dropdown', key: 'layoutDirection', options: { horizontal: 'Horizontal (left to right)', vertical: 'Vertical (top to bottom)' } } },
             { name: 'Preview split', control: { type: 'dropdown', key: 'splitDirection', options: { horizontal: 'Horizontal（左右并排）', vertical: 'Vertical（上下排列）' } } },
+            { name: '节点内滚动', control: { type: 'toggle', key: 'nodeScrolling' } },
             { name: 'Node min height', control: { type: 'number', key: 'nodeMinHeight', min: 1 } },
             { name: 'Node text line height', control: { type: 'text', key: 'lineHeight' } },
             { name: 'Vertical spacing', control: { type: 'number', key: 'spacingVertical', min: 0 } },
@@ -35,6 +36,10 @@ export class MindMapSettingsTab extends PluginSettingTab {
             await this.plugin.setLayoutDirection(value);
             return;
         }
+        if (key === 'nodeScrolling' && typeof value === 'boolean') {
+            await this.plugin.setNodeScrolling(value);
+            return;
+        }
         if (key === 'splitDirection' && (value === 'horizontal' || value === 'vertical')) this.plugin.settings.splitDirection = value;
         else if (key === 'lineHeight' && typeof value === 'string') this.plugin.settings.lineHeight = value;
         else if ((key === 'nodeMinHeight' || key === 'spacingVertical' || key === 'spacingHorizontal' || key === 'paddingX') && typeof value === 'number' && Number.isFinite(value) && value >= 0) this.plugin.settings[key] = value;
@@ -48,7 +53,7 @@ export class MindMapSettingsTab extends PluginSettingTab {
         containerEl.empty();
         new Setting(containerEl).setName(`FlyMind ${this.plugin.manifest.version}`).setHeading();
         containerEl.createEl('p', { text: `作者：${this.plugin.manifest.author || ''}` });
-        containerEl.createEl('p', { text: '将 Markdown 笔记变为可交互的思维导图：同标签切换、水平／垂直布局、正文与分支独立折叠、自由拖动、自动排列和焦点缩放。' });
+        containerEl.createEl('p', { text: '将 Markdown 笔记变为思维导图：同标签切换、分屏预览与保存后同步、水平／垂直布局、节点摘要或滚动正文、点击标题查看右侧详情、正文与分支独立折叠、批量折叠、自由拖动、自动排列、顶部缩放、固定预览和截图复制。' });
 
         new Setting(containerEl)
             .setName('Mind map direction')
@@ -71,6 +76,12 @@ export class MindMapSettingsTab extends PluginSettingTab {
                         this.plugin.settings.splitDirection = value as SplitDirection;
                         void this.plugin.saveData(this.plugin.settings);
                     }));
+
+        new Setting(containerEl)
+            .setName('节点内滚动')
+            .setDesc('关闭：只显示摘要。开启：显示完整正文，超出高度后滚动。两种模式均可点击节点标题查看右侧详情。')
+            .addToggle(toggle => toggle.setValue(this.plugin.settings.nodeScrolling)
+                .onChange(value => this.plugin.setNodeScrolling(value)));
 
         new Setting(containerEl)
             .setName('Node min height')

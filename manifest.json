@@ -4,6 +4,6 @@
   "author": "fairyang",
   "version": "1.2.3",
   "minAppVersion": "1.1.0",
-  "description": "Turn Markdown notes into interactive mind maps with same-tab switching, horizontal and vertical layouts, collapsible content, free node positioning, and focus-centered zoom.",
+  "description": "Turn Markdown into mind maps with same-tab switching, split previews, two layouts, summaries or scrollable nodes, a details panel, folding, dragging, zoom and screenshot copying.",
   "isDesktopOnly": false
 }

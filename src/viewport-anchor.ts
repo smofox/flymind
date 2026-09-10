@@ -6,5 +6,6 @@ export function centerOf(element: Element): ScreenPoint {
 export function keepScreenPoint(before: ScreenPoint, element: Element, translate: (x: number, y: number) => void) {
     if (!element) return;
     const after = centerOf(element);
-    translate(before.x - after.x, before.y - after.y);
+    const dx = before.x - after.x, dy = before.y - after.y;
+    if (dx || dy) translate(dx, dy);
 }

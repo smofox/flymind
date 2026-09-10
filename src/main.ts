@@ -19,10 +19,17 @@ export default class MindMap extends Plugin {
         this.settings.layoutDirection = this.settings.layoutDirection === 'vertical' ? 'vertical' : 'horizontal';
         this.settings.splitDirection = String(this.settings.splitDirection).toLowerCase() === 'vertical' ? 'vertical' : 'horizontal';
         this.registerView(MM_VIEW_TYPE, (leaf: WorkspaceLeaf) => this.createPreview(leaf));
-        this.tabToggle = new TabToggle(this.workspace);
+        this.tabToggle = new TabToggle(this.workspace, () => this.splitPreview());
         this.workspace.onLayoutReady(() => this.tabToggle.sync());
         this.registerEvent(this.workspace.on('layout-change', () => this.tabToggle.sync()));
         this.registerEvent(this.workspace.on('active-leaf-change', () => this.tabToggle.sync()));
+        this.registerEvent(this.vault.on('modify', file => {
+            if (!file.path.endsWith('.md')) return;
+            this.workspace.getLeavesOfType(MM_VIEW_TYPE).forEach(leaf => {
+                const view = leaf.view as MindmapView;
+                if (view.filePath === file.path) void view.update(false);
+            });
+        }));
         this.addCommand({ id: 'app:markmap-preview', name: '在独立窗格预览当前笔记',
             callback: () => this.markMapPreview() });
         this.addCommand({ id: 'toggle-layout-direction', name: '切换水平／垂直布局',
@@ -33,7 +40,8 @@ export default class MindMap extends Plugin {
     private createPreview(leaf: WorkspaceLeaf, source = this.workspace.getActiveViewOfType(MarkdownView)) {
         return new MindmapView(this.settings, leaf,
             { path: source?.file?.path, basename: source?.file?.basename },
-            direction => this.setLayoutDirection(direction), source?.leaf);
+            direction => this.setLayoutDirection(direction), source?.leaf,
+            enabled => this.setNodeScrolling(enabled));
     }
 
     async markMapPreview() {
@@ -54,6 +62,23 @@ export default class MindMap extends Plugin {
         const leaf = this.workspace.getLeaf('split', this.settings.splitDirection === 'horizontal' ? 'vertical' : 'horizontal');
         const preview = this.createPreview(leaf, source);
         await leaf.open(preview);
+    }
+
+    async splitPreview() {
+        const source = this.workspace.getActiveViewOfType(MarkdownView);
+        if (!source?.file) { new Notice('Open a Markdown note before opening split preview.'); return; }
+        const existing = this.workspace.getLeavesOfType(MM_VIEW_TYPE).find(leaf =>
+            (leaf.view as MindmapView).filePath === source.file.path && !(leaf.view as MindmapView).inline);
+        if (existing) { this.workspace.setActiveLeaf(existing, { focus: true }); await (existing.view as MindmapView).update(); return; }
+        const leaf = this.workspace.getLeaf('split', this.settings.splitDirection === 'horizontal' ? 'vertical' : 'horizontal');
+        const preview = this.createPreview(leaf, source);
+        await leaf.open(preview);
+    }
+
+    async setNodeScrolling(enabled: boolean) {
+        this.settings.nodeScrolling = enabled;
+        await this.saveData(this.settings);
+        await Promise.all(this.workspace.getLeavesOfType(MM_VIEW_TYPE).map(leaf => (leaf.view as MindmapView).refreshBodyMode(enabled)));
     }
 
     async setLayoutDirection(direction: LayoutDirection) {

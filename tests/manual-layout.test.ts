@@ -8,7 +8,7 @@ import { VerticalMarkmap } from '../src/vertical-markmap';
 describe('manual node layout', () => {
     for (const direction of ['horizontal', 'vertical']) {
         it(`${direction}: moves nodes and links, retains folds, and restores automatic positions without zooming`, () => {
-            const root = transformWithParagraphs('# Root\n\nBody\n\n- Child\n  - Grandchild').root;
+            const root = transformWithParagraphs('# Root\n\nBody\n\n## Child\n\n### Grandchild').root;
             identifyNodes(root);
             const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
             document.body.appendChild(svg);

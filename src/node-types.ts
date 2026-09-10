@@ -1,6 +1,7 @@
 import { INode as MarkmapNode } from 'markmap-common';
 
 export interface NodeProperties {
+    s?: [number, number];
     paragraphId?: number;
     layoutId?: string;
     f?: boolean | number;

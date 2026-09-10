@@ -33,3 +33,32 @@ describe('floating zoom controls', () => {
         host.remove();
     });
 });
+
+
+describe('vertical double-click zoom', () => {
+    it('keeps the clicked map point stationary and cleans up the handler', () => {
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        document.body.appendChild(svg);
+        svg.getBoundingClientRect = () => ({ left: 50, top: 80, width: 800, height: 600, right: 850, bottom: 680, x: 50, y: 80, toJSON: () => ({}) });
+        const map = new VerticalMarkmap(svg, transformWithParagraphs('# Root\n\n## Child').root,
+            { font: '16px sans-serif', padding: 0, gapX: 80, gapY: 40, nodeMinHeight: 16 });
+        map.translateBy(70, -35);
+        const point = () => {
+            const values = svg.querySelector('g')!.getAttribute('transform')!.match(/-?\d+(?:\.\d+)?/g)!.map(Number);
+            return [(230 - values[0]) / values[2], (150 - values[1]) / values[2]];
+        };
+        const before = point(), scale = map.getScale();
+        const click = (target: Element, shiftKey = false) => target.dispatchEvent(new MouseEvent('dblclick', { bubbles: true, cancelable: true, clientX: 280, clientY: 230, shiftKey }));
+        click(svg);
+        expect(map.getScale()).to.equal(scale * 2);
+        point().forEach((value, i) => expect(value).to.be.closeTo(before[i], 1e-8));
+        click(svg, true);
+        expect(map.getScale()).to.equal(scale);
+        point().forEach((value, i) => expect(value).to.be.closeTo(before[i], 1e-8));
+        click(svg.querySelector('.mm-node')!);
+        expect(map.getScale()).to.equal(scale);
+        map.destroy(); click(svg);
+        expect(map.getScale()).to.equal(scale);
+        svg.remove();
+    });
+});

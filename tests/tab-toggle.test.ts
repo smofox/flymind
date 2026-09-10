@@ -20,7 +20,8 @@ describe('same-tab brain toggle', () => {
         const f = fixture();
         f.control.sync(); f.control.sync();
         expect(f.header.querySelectorAll('.mm-tab-toggle').length).to.equal(1);
-        expect(f.header.querySelector('.mm-tab-toggle')!.nextElementSibling!.className).to.equal('workspace-tab-header-inner-close-button');
+        expect(f.header.querySelector('.mm-tab-toggle')!.nextElementSibling!.className).to.equal('clickable-icon mm-tab-split');
+        expect(f.header.querySelector<HTMLElement>('.mm-tab-controls')!.style.gap).to.equal('1px');
         await f.control.toggle(f.leaf);
         expect(f.state()).to.deep.equal({ type: MM_VIEW_TYPE, state: { file: 'note.md', inline: true }, active: true });
         expect(f.header.querySelector('button')!.getAttribute('aria-pressed')).to.equal('true');
