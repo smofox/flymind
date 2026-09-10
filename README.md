@@ -23,7 +23,9 @@
 ☕️☕️**Buy me a coffee**☕️☕️
 
 >【WeChat · zionboy】
+>
 >【Alipay · bitmoney@139.com】
+>
 >【Crypto · 0xE89eA2cE81EC0e796B3BbE1877cCfde8DF117894】
 
 ---
@@ -64,8 +66,11 @@ Maintained by **fairyang**, based on James Lynch's [Obsidian Mind Map](https://g
 
 - ☕️☕️**给我买杯咖啡**☕️☕️
 >【微信 · zionboy】
+>
 >【支付宝 · bitmoney@139.com】
+>
 >【加密货币 · 0xE89eA2cE81EC0e796B3BbE1877cCfde8DF117894】
+>
 - **右侧详情：** 点击节点标题打开完整格式的正文面板，内容过长可滚动；点击其他标题切换内容，点击 **×** 或画布空白处关闭。两种正文模式都支持详情。
 - **独立折叠：** 圆圈加减号控制正文，连线端点控制分支；顶部按钮可一键展开／折叠全部正文，保持当前缩放倍数。
 - **自由拖动与自动排列：** 拖动节点调整位置，连线同步移动；点击**自动**恢复默认排列。
@@ -112,7 +117,9 @@ Maintained by **fairyang**, based on James Lynch's [Obsidian Mind Map](https://g
 ☕️☕️**给我买杯咖啡**☕️☕️
 
 >【微信 · zionboy】
+>
 >【支付宝 · bitmoney@139.com】
+>
 >【加密货币 · 0xE89eA2cE81EC0e796B3BbE1877cCfde8DF117894】
 
 ---
@@ -122,5 +129,7 @@ Maintained by **fairyang**, based on James Lynch's [Obsidian Mind Map](https://g
 ☕️☕️**Buy me a coffee**☕️☕️
 
 >【WeChat · zionboy】
+>
 >【Alipay · bitmoney@139.com】
+>
 >【Crypto · 0xE89eA2cE81EC0e796B3BbE1877cCfde8DF117894】
