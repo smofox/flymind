@@ -2,8 +2,8 @@
   "id": "flymind",
   "name": "FlyMind",
   "author": "fairyang",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "minAppVersion": "1.1.0",
-  "description": "FlyMind 是一款 Obsidian Markdown 思维导图插件，也是一款 mindmap / mind map 工具。它可以将 Markdown 笔记转换为可交互、可折叠的思维导图，支持同标签切换、分屏预览、节点拖拽、内容滚动、右侧详情和缩放控制。给我买杯咖啡：微信 zionboy，支付宝 bitmoney@139.com，Crypto 0xE89eA2cE81EC0e796B3BbE1877cCfde8DF117894。",
+  "description": "一款 Markdown 思维导图插件，也是一款 mindmap / mind map 工具。它可以将 Markdown 笔记转换为可交互、可折叠的思维导图，支持同标签切换、分屏预览、节点拖拽、内容滚动、右侧详情和缩放控制。\n给我买杯咖啡：微信•zionboy，支付宝•bitmoney@139.com，Crypto•0xE89eA2cE81EC0e796B3BbE1877cCfde8DF117894.",
   "isDesktopOnly": false
 }
